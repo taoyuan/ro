@@ -1,0 +1,1 @@
+global.test = function() { return new (require('tape').Test)() };
