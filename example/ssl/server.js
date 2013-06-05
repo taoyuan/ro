@@ -9,8 +9,8 @@ var opts = {
 
 var server = ro.server(function (remote, conn) {
     this.time = function (cb) { cb(new Date().toString()) };
-}, {ssl: opts});
-server.listen(7000, function() {
+});
+server.listen(7000, {ssl: opts}, function() {
     console.log(
         'SSL server listening on %s:%d',
         '0.0.0.0', 7000
