@@ -1,8 +1,7 @@
 var assert = require('assert');
 var async = require('async');
 
-var Server = require('../lib/server');
-var Client = require('../lib/client');
+var ro = require('../');
 
 var dnode = require('dnode');
 var PORT = Math.floor(Math.random() * 5e4 + 1e4);
@@ -55,7 +54,7 @@ describe('server', function () {
 
     describe('close', function () {
         it('will close port on close', function (done) {
-            server = new Server();
+            server = ro.server();
             server.on('error', function (err) {
                 throw new Error(err);
             });
@@ -71,7 +70,7 @@ describe('server', function () {
         });
 
         it('won\'t error if close twice', function (done) {
-            server = new Server();
+            server = ro.server();
             server.on('error', function (err) {
                 throw new Error(err);
             });
@@ -99,7 +98,7 @@ describe('server', function () {
 
     describe('listening on a port', function () {
         it('will use callback when listening on port', function (done) {
-            server = new Server().listen(PORT, function (err) {
+            server = ro.server().listen(PORT, function (err) {
                 assert.ok(!err);
                 isPortTaken(PORT, function (err, isTaken) {
                     assert.ok(!err);
@@ -109,7 +108,7 @@ describe('server', function () {
             })
         });
         it('will emit ready when listening on port', function (done) {
-            server = new Server().listen(PORT);
+            server = ro.server().listen(PORT);
             server.on('ready', function () {
                 isPortTaken(PORT, function (err, isTaken) {
                     assert.ok(!err);
@@ -123,7 +122,7 @@ describe('server', function () {
 
     describe('channels', function () {
         beforeEach(function (done) {
-            server = new Server().listen(PORT, done)
+            server = ro.server().listen(PORT, done)
         });
         it('should emit connect events', function (done) {
             server.once('connect', function (remote, channel) {
@@ -142,20 +141,20 @@ describe('server', function () {
                 });
                 client.close();
             });
-            client = new Client().connect(PORT);
+            client = ro.client().connect(PORT);
         });
         describe('server.channels', function () {
             it('should start with zero channels', function () {
                 assert.equal(server.channels.length, 0);
             });
             it('should hold channels', function (done) {
-                client = new Client().connect(PORT, function (remote, conn) {
+                client = ro.client().connect(PORT, function (remote, conn) {
                     assert.equal(server.channels.length, 1);
                     done();
                 })
             });
             it('should remove channels', function (done) {
-                client = new Client().connect(PORT, function (remote, conn) {
+                client = ro.client().connect(PORT, function (remote, conn) {
                     assert.equal(server.channels.length, 1);
                     client.close(function () {
                         assert.equal(server.channels.length, 0);
@@ -164,9 +163,9 @@ describe('server', function () {
                 })
             });
             it('should remove multiple channels', function (done) {
-                client = new Client().connect(PORT, function (remote, conn) {
+                client = ro.client().connect(PORT, function (remote, conn) {
                     assert.equal(server.channels.length, 1);
-                    var client2 = new Client().connect(PORT, function (remote, conn) {
+                    var client2 = ro.client().connect(PORT, function (remote, conn) {
                         assert.equal(server.channels.length, 2);
                         client.close(function () {
                             assert.equal(server.channels.length, 1);
@@ -179,9 +178,9 @@ describe('server', function () {
                 })
             });
             it('should hold multiple channels', function(done) {
-                client = new Client().connect(PORT, function(remote1, conn1) {
+                client = ro.client().connect(PORT, function(remote1, conn1) {
                     assert.equal(server.channels.length, 1);
-                    var client2 = new Client().connect(PORT, function(remote2, conn2) {
+                    var client2 = ro.client().connect(PORT, function(remote2, conn2) {
                         assert.equal(server.channels.length, 2);
                         client2.close(function() {
                             done();

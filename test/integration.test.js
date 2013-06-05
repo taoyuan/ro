@@ -1,8 +1,7 @@
 var assert = require('assert');
 var async = require('async');
 
-var Server = require('../lib/server');
-var Client = require('../lib/client');
+var ro = require('../');
 
 var PORT = Math.floor(Math.random() * 5e4 + 1e4);
 
@@ -45,8 +44,8 @@ describe('handing an API', function () {
                     callback(null, "server")
                 }
             };
-            server = new Server(service).listen(PORT);
-            client = new Client().connect(PORT);
+            server = ro.server(service).listen(PORT);
+            client = ro.client().connect(PORT);
             client.once('up', function (remote) {
                 assert.equal(remote.status, "working");
                 remote.whoami(function (err, val) {
@@ -57,157 +56,157 @@ describe('handing an API', function () {
             });
         });
 
-//        it('service is passed channel/remote to each call', function (done) {
-//            var _channel;
-//            var service = function (remote, channel) {
-//                return {
-//                    status: "working",
-//                    whoami: function (callback) {
-//                        assert.ok(remote);
-//                        assert.ok(channel);
-//                        assert.equal(channel, _channel);
-//                        callback(null);
-//                    }
-//                }
-//            };
-//            server = new Server(service).listen(PORT);
-//            server.once('connect', function (remote, channel) {
-//                _channel = channel;
-//            });
-//            client = new Client().connect(PORT);
-//            client.once('up', function (remote) {
-//                remote.whoami(function (err, val) {
-//                    done();
-//                });
-//            })
-//        });
-//
-//        it('can send args', function (done) {
-//            var _channel;
-//            var service = {
-//                say: function (word, callback) {
-//                    callback(null, 'I said ' + word)
-//                }
-//            };
-//            server = new Server(service).listen(PORT);
-//            server.once('connect', function (remote, channel) {
-//                _channel = channel
-//            });
-//            client = new Client().connect(PORT);
-//            client.once('up', function (remote) {
-//                remote.say('cows.', function (err, value) {
-//                    assert.equal(value, 'I said cows.');
-//                    done()
-//                })
-//            })
-//        });
-//
-//        it('can send error args', function(done) {
-//            var _channel;
-//            var service = {
-//                say: function (callback) {
-//                    callback(new Error('success'))
-//                }
-//            };
-//            server = new Server(service).listen(PORT);
-//            server.once('connect', function (remote, channel) {
-//                _channel = channel
-//            });
-//            client = new Client().connect(PORT);
-//            client.once('up', function(remote) {
-//                remote.say(function(err, value) {
-//                    assert.equal(err.message, 'success');
-//                    done()
-//                })
-//            })
-//        })
+        it('service is passed channel/remote to each call', function (done) {
+            var _channel;
+            var service = function (remote, channel) {
+                return {
+                    status: "working",
+                    whoami: function (callback) {
+                        assert.ok(remote);
+                        assert.ok(channel);
+                        assert.equal(channel, _channel);
+                        callback(null);
+                    }
+                }
+            };
+            server = ro.server(service).listen(PORT);
+            server.once('connect', function (remote, channel) {
+                _channel = channel;
+            });
+            client = ro.client().connect(PORT);
+            client.once('up', function (remote) {
+                remote.whoami(function (err, val) {
+                    done();
+                });
+            })
+        });
+
+        it('can send args', function (done) {
+            var _channel;
+            var service = {
+                say: function (word, callback) {
+                    callback(null, 'I said ' + word)
+                }
+            };
+            server = ro.server(service).listen(PORT);
+            server.once('connect', function (remote, channel) {
+                _channel = channel
+            });
+            client = ro.client().connect(PORT);
+            client.once('up', function (remote) {
+                remote.say('cows.', function (err, value) {
+                    assert.equal(value, 'I said cows.');
+                    done()
+                })
+            })
+        });
+
+        it('can send error args', function(done) {
+            var _channel;
+            var service = {
+                say: function (callback) {
+                    callback(new Error('success'))
+                }
+            };
+            server = ro.server(service).listen(PORT);
+            server.once('connect', function (remote, channel) {
+                _channel = channel
+            });
+            client = ro.client().connect(PORT);
+            client.once('up', function(remote) {
+                remote.say(function(err, value) {
+                    assert.equal(err.message, 'success');
+                    done()
+                })
+            })
+        })
     });
 
     // SERVER TEST
     // ------------------------------------------------------------------------
 
-//    describe('server', function() {
-//        it('can call client methods', function (done) {
-//            var service = {
-//                status: "working",
-//                whoami: function (callback) {
-//                    callback(null, "client")
-//                }
-//            };
-//            server = new Server().listen(PORT);
-//            server.once('connect', function (remote) {
-//                assert.equal(remote.status, "working");
-//                remote.whoami(function (err, val) {
-//                    assert.equal(val, "client");
-//                    assert.ok(!err);
-//                    done()
-//                })
-//            });
-//
-//            client = new Client(service).connect(PORT)
-//        });
-//        it('service is passed channel/remote to each call', function (done) {
-//            var _channel;
-//            var service = function (remote, channel) {
-//                return {
-//                    status: "working",
-//                    whoami: function (callback) {
-//                        assert.ok(remote);
-//                        assert.ok(channel);
-//                        assert.equal(channel, _channel);
-//                        callback(null)
-//                    }
-//                }
-//            };
-//            server = new Server().listen(PORT);
-//            server.once('connect', function (remote, channel) {
-//                remote.whoami(function (err, value) {
-//                    done()
-//                })
-//            });
-//            client = new Client(service).connect(PORT);
-//            client.once('up', function (remote, channel) {
-//                _channel = channel
-//            })
-//        });
-//        it('can use custom error serialisation', function (done) {
-//            var _channel;
-//            var service = {
-//                say: function (word, callback) {
-//                    callback(null, 'I said ' + word)
-//                }
-//            };
-//            server = new Server().listen(PORT);
-//            server.once('connect', function (remote, channel) {
-//                remote.say('cows.', function (err, value) {
-//                    assert.equal(value, 'I said cows.');
-//                    server.close(done)
-//                })
-//            });
-//            client = new Client(service).connect(PORT);
-//            client.once('up', function (remote, channel) {
-//                _channel = channel
-//            })
-//        });
-//        it('can send error args', function(done) {
-//            var _channel;
-//            var service = {
-//                say: function (word, callback) {
-//                    callback(new Error('success'))
-//                }
-//            };
-//            server = new Server().listen(PORT);
-//            server.once('connect', function (remote, channel) {
-//                remote.say('cows.', function (err, value) {
-//                    assert.equal(err.message, 'success');
-//                    server.close(done)
-//                })
-//            });
-//            client = new Client(service).connect(PORT);
-//            client.once('up', function(remote, channel) {
-//                _channel = channel
-//            })
-//        })
-//
-//    })
+    describe('server', function() {
+        it('can call client methods', function (done) {
+            var service = {
+                status: "working",
+                whoami: function (callback) {
+                    callback(null, "client")
+                }
+            };
+            server = ro.server().listen(PORT);
+            server.once('connect', function (remote) {
+                assert.equal(remote.status, "working");
+                remote.whoami(function (err, val) {
+                    assert.equal(val, "client");
+                    assert.ok(!err);
+                    done()
+                })
+            });
+
+            client = ro.client(service).connect(PORT)
+        });
+        it('service is passed channel/remote to each call', function (done) {
+            var _channel;
+            var service = function (remote, channel) {
+                return {
+                    status: "working",
+                    whoami: function (callback) {
+                        assert.ok(remote);
+                        assert.ok(channel);
+                        assert.equal(channel, _channel);
+                        callback(null)
+                    }
+                }
+            };
+            server = ro.server().listen(PORT);
+            server.once('connect', function (remote, channel) {
+                remote.whoami(function (err, value) {
+                    done()
+                })
+            });
+            client = ro.client(service).connect(PORT);
+            client.once('up', function (remote, channel) {
+                _channel = channel
+            })
+        });
+        it('can use custom error serialisation', function (done) {
+            var _channel;
+            var service = {
+                say: function (word, callback) {
+                    callback(null, 'I said ' + word)
+                }
+            };
+            server = ro.server().listen(PORT);
+            server.once('connect', function (remote, channel) {
+                remote.say('cows.', function (err, value) {
+                    assert.equal(value, 'I said cows.');
+                    server.close(done)
+                })
+            });
+            client = ro.client(service).connect(PORT);
+            client.once('up', function (remote, channel) {
+                _channel = channel
+            })
+        });
+        it('can send error args', function(done) {
+            var _channel;
+            var service = {
+                say: function (word, callback) {
+                    callback(new Error('success'))
+                }
+            };
+            server = ro.server().listen(PORT);
+            server.once('connect', function (remote, channel) {
+                remote.say('cows.', function (err, value) {
+                    assert.equal(err.message, 'success');
+                    server.close(done)
+                })
+            });
+            client = ro.client(service).connect(PORT);
+            client.once('up', function(remote, channel) {
+                _channel = channel
+            })
+        })
+
+    })
 });

@@ -3,8 +3,7 @@
 var assert = require('assert');
 var async = require('async');
 
-var Server = require('../lib/server');
-var Client = require('../lib/client');
+var ro = require('../');
 
 var PORT = Math.floor(Math.random() * 5e4 + 1e4);
 
@@ -33,7 +32,7 @@ describe('client', function() {
     beforeEach(close);
     afterEach(close);
     beforeEach(function(done) {
-        server = new Server();
+        server = ro.server();
         server.on('error', function(err) {
             throw new Error(err);
         });
@@ -44,7 +43,7 @@ describe('client', function() {
 
     describe('close', function() {
         it('won\'t reconnect after close', function(done) {
-            client = new Client().connect(PORT);
+            client = ro.client().connect(PORT);
             client.close(function() {
                 done();
             });
@@ -53,7 +52,7 @@ describe('client', function() {
             });
         });
         it('will close channel on close', function(done) {
-            client = new Client().connect(PORT);
+            client = ro.client().connect(PORT);
             client.on('up', function(remote, channel) {
                 client.close(function() {
                     assert.ok(client.closed);
@@ -66,7 +65,7 @@ describe('client', function() {
 //            server.on('connect', function() {
 //                throw new Error('Should not connect');
 //            });
-            client = new Client().connect(PORT);
+            client = ro.client().connect(PORT);
             client.on('up', function() {
                 throw new Error('Should not up');
             });
@@ -82,7 +81,7 @@ describe('client', function() {
 //            server.on('connect', function() {
 //                throw new Error('Should not connect');
 //            });
-            client = new Client().connect(PORT);
+            client = ro.client().connect(PORT);
             client.close(function() {
                 client.close(function() {
                     done();
@@ -91,7 +90,7 @@ describe('client', function() {
         });
 
         it('won\'t error if close multiple times', function(done) {
-            client = new Client().connect(PORT);
+            client = ro.client().connect(PORT);
             client.on('up', function() {
                 client.close(function(err) {
                     assert.ok(!err);
@@ -111,7 +110,7 @@ describe('client', function() {
         });
 
         it('won\'t error if close and connect multiple times', function(done) {
-            client = new Client().connect(PORT);
+            client = ro.client().connect(PORT);
             client.on('up', function() {
                 client.close(function(err) {
                     assert.ok(!err);
@@ -129,7 +128,7 @@ describe('client', function() {
 
     describe('connecting to a port', function() {
         it('will use callback when listening on port', function(done) {
-            client = new Client().connect(PORT, function(remote, channel) {
+            client = ro.client().connect(PORT, function(remote, channel) {
                 assert.ok(remote);
                 assert.ok(channel);
                 channel.emit('up', remote);
@@ -138,14 +137,14 @@ describe('client', function() {
         });
 
         it('will emit up when connected, passing channel object', function(done) {
-            client = new Client().connect(PORT);
+            client = ro.client().connect(PORT);
             client.on('up', function(remote) {
                 assert.ok(remote);
                 done();
             });
         });
         it('will emit informative error if can\'t connect', function(done) {
-            client = new Client().connect('garbage', function() {
+            client = ro.client().connect('garbage', function() {
                 throw new Error('Shouldn\'t be up.')
             });
             client.on('up', function(remote) {

@@ -1,5 +1,5 @@
 var ro = require('../'),
-    should = require('should');
+    assert = require('assert');
 
 it('simple', function(done) {
     var port = Math.floor(Math.random() * 5e4 + 1e4);
@@ -9,7 +9,6 @@ it('simple', function(done) {
     client.on('up', function () { counts.up ++ });
     client.on('down', function () { counts.down ++ });
     client.on('reconnect', function () { counts.reconnect ++ });
-//    client.on('error', function() {});
 
     var messages = [];
     var iv = setInterval(function () {
@@ -37,16 +36,16 @@ it('simple', function(done) {
             if (x < acc.min) acc.min = x;
             return acc;
         }, { min : Infinity, max : -Infinity });
-        (r0.max < Date.now()).should.be.ok;
-        (r0.max > Date.now() - 5000).should.be.ok;
-        (r0.max - r0.min < 10).should.be.ok;
+        assert.ok(r0.max < Date.now());
+        assert.ok(r0.max > Date.now() - 5000);
+        assert.ok(r0.max - r0.min < 10);
 
-        (messages[0] < messages[messages.length-1]).should.be.ok;
-        (messages.length > 5).should.be.ok;
+        assert.ok(messages[0] < messages[messages.length-1]);
+        assert.ok(messages.length > 5);
 
-        counts.up.should.equal(2);
-        counts.down.should.equal(1);
-        (counts.reconnect >= 2).should.be.ok;
+        assert.equal(counts.up, 2);
+        assert.equal(counts.down, 1);
+        assert.ok(counts.reconnect >= 2);
 
         off();
         client.close();
@@ -76,7 +75,7 @@ it('does not leak on.close listeners', function(_done) {
     on();
 
     client.once('close', function () {
-        client.listeners('close').length.should.equal(0);
+        assert.equal(client.listeners('close').length, 0);
         _done();
     });
     client.on('up', function () {
@@ -88,7 +87,6 @@ it('does not leak on.close listeners', function(_done) {
         if (iterations === 0) return done();
         return on();
     });
-//    client.on('error', function() {});
 
     function done () {
         client.close();
@@ -119,8 +117,8 @@ it('add callbacks in connection handler', function (done) {
 
     client.on('remote', function (remote, channel) {
         client.up(function (remote_, conn_) {
-            remote.should.equal(remote_);
-            channel.should.equal(conn_);
+            assert.equal(remote, remote_);
+            assert.equal(channel, conn_);
 
             client.close();
             server.close();
@@ -128,7 +126,6 @@ it('add callbacks in connection handler', function (done) {
         });
         channel.emit('up', remote);
     });
-//    client.on('error', function() {});
 
     var server = ro.server();
     server.listen(port);
