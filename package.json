@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "debug": "~0.7.2",
-    "midst": "~0.0.9",
+    "midst": "~0.1.0",
     "eventemitter2": "~0.4.11",
     "dnode": "~1.0.5"
   },
