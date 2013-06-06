@@ -1,12 +1,21 @@
 var ro = require('../../');
 
-var server = ro(function (client, conn) {
-    this.auth = function (user, pass, cb) {
+function auth_middleware(c, next) {
+    c.local.auth = function (user, pass, cb) {
         if (user === 'moo' && pass === 'hax') {
-            cb(null, {
-                beep : function (fn) { fn('boop at ' + new Date) }
-            });
+            c.local = {};
+            next();
+            cb(null, c.local);
         }
         else cb('ACCESS DENIED')
     };
-}).listen(7000);
+}
+
+function service_middleware(c) {
+    c.local.beep = function (fn) { fn(new Date().toString()) };
+}
+
+var server = ro.server();
+server.use(auth_middleware);
+server.use(service_middleware);
+server.listen(7000);

@@ -9,7 +9,7 @@ describe('auth', function() {
             remote.auth('moo', 'hax', function (err, res) {
                 assert.ok(res);
 
-                if (err) assert.fail(err)
+                if (err) assert.fail(err);
                 else conn.emit('up', res)
             });
         });
@@ -33,18 +33,26 @@ describe('auth', function() {
             });
         }, 200);
 
+        function auth_middleware(c, next) {
+            c.local.auth = function (user, pass, cb) {
+                if (user === 'moo' && pass === 'hax') {
+                    c.local = {};
+                    next();
+                    cb(null, c.local);
+                }
+                else cb('ACCESS DENIED')
+            };
+        }
+
+        function service_middleware(c) {
+            c.local.beep = function (fn) { fn(new Date().toString()) };
+        }
+
         var server = null;
         function connect () {
-            server = ro.server(function (client, conn) {
-                this.auth = function (user, pass, cb) {
-                    if (user === 'moo' && pass === 'hax') {
-                        cb(null, {
-                            beep : function (fn) { fn(new Date().toString()) }
-                        });
-                    }
-                    else cb('ACCESS DENIED')
-                };
-            });
+            server = ro.server();
+            server.use(auth_middleware);
+            server.use(service_middleware);
             server.listen(port);
         }
         connect();
