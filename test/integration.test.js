@@ -206,7 +206,7 @@ describe('handing an API', function () {
             client.once('up', function(remote, channel) {
                 _channel = channel
             })
-        })
+        });
 
     })
 });
