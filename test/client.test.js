@@ -47,13 +47,13 @@ describe('client', function() {
             client.close(function() {
                 done();
             });
-            client.on('remote', function(remote, channel) {
+            client.on('remote', function(remote, connection) {
                 throw new Error('Should not connect after close')
             });
         });
-        it('will close channel on close', function(done) {
+        it('will close connection on close', function(done) {
             client = ro.client().connect(PORT);
-            client.on('up', function(remote, channel) {
+            client.on('up', function(remote, connection) {
                 client.close(function() {
                     assert.ok(client.closed);
                     done();
@@ -128,15 +128,15 @@ describe('client', function() {
 
     describe('connecting to a port', function() {
         it('will use callback when listening on port', function(done) {
-            client = ro.client().connect(PORT, function(remote, channel) {
+            client = ro.client().connect(PORT, function(remote, connection) {
                 assert.ok(remote);
-                assert.ok(channel);
-                channel.emit('up', remote);
+                assert.ok(connection);
+                connection.emit('up', remote);
                 done();
             });
         });
 
-        it('will emit up when connected, passing channel object', function(done) {
+        it('will emit up when connected, passing connection object', function(done) {
             client = ro.client().connect(PORT);
             client.on('up', function(remote) {
                 assert.ok(remote);

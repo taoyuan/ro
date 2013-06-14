@@ -56,22 +56,22 @@ describe('handing an API', function () {
             });
         });
 
-        it('service is passed channel/remote to each call', function (done) {
+        it('service is passed connection/remote to each call', function (done) {
             var _channel;
-            var service = function (remote, channel) {
+            var service = function (remote, connection) {
                 return {
                     status: "working",
                     whoami: function (callback) {
                         assert.ok(remote);
-                        assert.ok(channel);
-                        assert.equal(channel, _channel);
+                        assert.ok(connection);
+                        assert.equal(connection, _channel);
                         callback(null);
                     }
                 }
             };
             server = ro.server(service).listen(PORT);
-            server.once('connect', function (remote, channel) {
-                _channel = channel;
+            server.once('connect', function (remote, connection) {
+                _channel = connection;
             });
             client = ro.client().connect(PORT);
             client.once('up', function (remote) {
@@ -89,8 +89,8 @@ describe('handing an API', function () {
                 }
             };
             server = ro.server(service).listen(PORT);
-            server.once('connect', function (remote, channel) {
-                _channel = channel
+            server.once('connect', function (remote, connection) {
+                _channel = connection
             });
             client = ro.client().connect(PORT);
             client.once('up', function (remote) {
@@ -109,8 +109,8 @@ describe('handing an API', function () {
                 }
             };
             server = ro.server(service).listen(PORT);
-            server.once('connect', function (remote, channel) {
-                _channel = channel
+            server.once('connect', function (remote, connection) {
+                _channel = connection
             });
             client = ro.client().connect(PORT);
             client.once('up', function(remote) {
@@ -145,28 +145,28 @@ describe('handing an API', function () {
 
             client = ro.client(service).connect(PORT)
         });
-        it('service is passed channel/remote to each call', function (done) {
+        it('service is passed connection/remote to each call', function (done) {
             var _channel;
-            var service = function (remote, channel) {
+            var service = function (remote, connection) {
                 return {
                     status: "working",
                     whoami: function (callback) {
                         assert.ok(remote);
-                        assert.ok(channel);
-                        assert.equal(channel, _channel);
+                        assert.ok(connection);
+                        assert.equal(connection, _channel);
                         callback(null)
                     }
                 }
             };
             server = ro.server().listen(PORT);
-            server.once('connect', function (remote, channel) {
+            server.once('connect', function (remote, connection) {
                 remote.whoami(function (err, value) {
                     done()
                 })
             });
             client = ro.client(service).connect(PORT);
-            client.once('up', function (remote, channel) {
-                _channel = channel
+            client.once('up', function (remote, connection) {
+                _channel = connection
             })
         });
         it('can use custom error serialisation', function (done) {
@@ -177,15 +177,15 @@ describe('handing an API', function () {
                 }
             };
             server = ro.server().listen(PORT);
-            server.once('connect', function (remote, channel) {
+            server.once('connect', function (remote, connection) {
                 remote.say('cows.', function (err, value) {
                     assert.equal(value, 'I said cows.');
                     server.close(done)
                 })
             });
             client = ro.client(service).connect(PORT);
-            client.once('up', function (remote, channel) {
-                _channel = channel
+            client.once('up', function (remote, connection) {
+                _channel = connection
             })
         });
         it('can send error args', function(done) {
@@ -196,15 +196,15 @@ describe('handing an API', function () {
                 }
             };
             server = ro.server().listen(PORT);
-            server.once('connect', function (remote, channel) {
+            server.once('connect', function (remote, connection) {
                 remote.say('cows.', function (err, value) {
                     assert.equal(err.message, 'success');
                     server.close(done)
                 })
             });
             client = ro.client(service).connect(PORT);
-            client.once('up', function(remote, channel) {
-                _channel = channel
+            client.once('up', function(remote, connection) {
+                _channel = connection
             })
         });
 

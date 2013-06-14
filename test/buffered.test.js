@@ -25,7 +25,7 @@ describe('buffered', function () {
                     cb(Date.now())
                 };
             },
-            function (channel, socket) {
+            function (connection, socket) {
                 setTimeout(function () {
                     socket.end();
                 }, 300);

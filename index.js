@@ -1,7 +1,7 @@
 var midst = require('midst'),
     server = require('./lib/server'),
     client = require('./lib/client'),
-    channel = require('./lib/channel'),
+    connection = require('./lib/connection'),
     utils = require('./lib/utils');
 
 module.exports = exports = function create(cons) {
@@ -31,4 +31,4 @@ exports.connect = function () {
 };
 
 exports.handler = server.handler;
-exports.channel = channel;
+exports.connection = connection;

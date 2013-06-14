@@ -10,7 +10,7 @@ describe('immediate', function() {
 
         server.listen(port, function () {
             var client = ro.connect(port);
-            client.up(function (remote, channel) {
+            client.up(function (remote, connection) {
                 remote.beep(function (s) {
                     assert.equal(s, 'boop');
                     client.close();

@@ -63,7 +63,7 @@ describe('simple', function () {
         var server;
 
         function on() {
-            server = ro.server(function (remote, channel) {
+            server = ro.server(function (remote, connection) {
                 this.time = function (cb) {
                     cb(Date.now())
                 };
@@ -119,23 +119,23 @@ describe('simple', function () {
         }
     });
 
-    it('add callbacks in channel handler', function (done) {
+    it('add callbacks in connection handler', function (done) {
         var port = Math.floor(Math.random() * 5e4 + 1e4);
 
         var client = ro(function () {
             this.beep = 5;
         }).connect(port);
 
-        client.on('remote', function (remote, channel) {
+        client.on('remote', function (remote, connection) {
             client.up(function (remote_, conn_) {
                 assert.equal(remote, remote_);
-                assert.equal(channel, conn_);
+                assert.equal(connection, conn_);
 
                 client.close();
                 server.close();
                 done();
             });
-            channel.emit('up', remote);
+            connection.emit('up', remote);
         });
 
         var server = ro.listen(port);
