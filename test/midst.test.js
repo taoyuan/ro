@@ -1,9 +1,9 @@
 var ro = require('../'),
+    t = require('./init').t,
     midst = require('midst');
 
 describe('midst', function() {
     it('use midst to build server services', function (done) {
-        var t = test();
         var port = Math.floor(Math.random() * 5e4 + 1e4);
 
         var server = ro.server();
@@ -23,13 +23,13 @@ describe('midst', function() {
         });
 
         function off() {
-            client.close();
-            server.close(done);
+            client && client.close();
+            server && server.close();
+            done();
         }
     });
 
     it('use midst to build client services', function (done) {
-        var t = test();
         var port = Math.floor(Math.random() * 5e4 + 1e4);
 
         var client = ro.client();
@@ -50,14 +50,18 @@ describe('midst', function() {
         });
 
         function off() {
-            client.close();
-            server.close(done);
+            client && client.close();
+            server && server.close();
+            done();
         }
     });
 
     it('use midst to build server and client services by top interface', function (done) {
-        var t = test();
-        t.plan(4);
+        var plan = t.plan(2, function () {
+            client && client.close();
+            server && server.close();
+            done();
+        });
         var port = Math.floor(Math.random() * 5e4 + 1e4);
 
         var server = ro()
@@ -78,6 +82,7 @@ describe('midst', function() {
             t.equal(remote.serverBoo, 1);
             remote.serverTime(function(val) {
                 t.ok(val);
+                plan.done();
             })
         });
 
@@ -85,15 +90,9 @@ describe('midst', function() {
             t.equal(remote.clientBoo, 2);
             remote.clientTime(function(val) {
                 t.ok(val);
+                plan.done();
             })
         });
-
-        function off() {
-            client.close();
-            server.close(done);
-        }
-
-        t.on('end', off);
     });
 });
 

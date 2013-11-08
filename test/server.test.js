@@ -1,9 +1,6 @@
-var assert = require('assert');
-var async = require('async');
-
+var t = require('./init').t;
 var ro = require('../');
 
-var dnode = require('dnode');
 var PORT = Math.floor(Math.random() * 5e4 + 1e4);
 
 function isPortTaken(port, callback) {
@@ -29,27 +26,11 @@ describe('server', function () {
     var client, server;
 
     function close(done) {
-        async.parallel([
-            function (next) {
-                if (server) {
-                    server.close(next);
-                } else {
-                    next();
-                }
-            },
-            function (next) {
-                if (client) {
-                    client.close(next);
-                } else {
-                    next();
-                }
-            }
-        ], function (err) {
-            done(err);
-        })
+        client && client.close();
+        server && server.close();
+        done();
     }
 
-    beforeEach(close);
     afterEach(close);
 
     describe('close', function () {
@@ -61,8 +42,8 @@ describe('server', function () {
             server.listen(PORT, function () {
                 server.close(function () {
                     isPortTaken(PORT, function (err, isTaken) {
-                        assert.ok(!err);
-                        assert.ok(!isTaken);
+                        t.ok(!err);
+                        t.ok(!isTaken);
                         done();
                     });
                 });
@@ -76,16 +57,16 @@ describe('server', function () {
             });
             server.listen(PORT, function () {
                 server.close(function (err) {
-                    assert.ok(!err);
+                    t.ok(!err);
                     server.close(function (err) {
-                        assert.ok(!err);
+                        t.ok(!err);
                         server.close(function (err) {
-                            assert.ok(!err);
+                            t.ok(!err);
                             server.close(function (err) {
-                                assert.ok(!err);
+                                t.ok(!err);
                                 isPortTaken(PORT, function (err, isTaken) {
-                                    assert.ok(!err);
-                                    assert.ok(!isTaken);
+                                    t.ok(!err);
+                                    t.ok(!isTaken);
                                     done();
                                 });
                             });
@@ -99,24 +80,24 @@ describe('server', function () {
     describe('listening on a port', function () {
         it('will use callback when listening on port', function (done) {
             server = ro.server().listen(PORT, function (err) {
-                assert.ok(!err);
+                t.ok(!err);
                 isPortTaken(PORT, function (err, isTaken) {
-                    assert.ok(!err);
-                    assert.ok(isTaken);
+                    t.ok(!err);
+                    t.ok(isTaken);
                     done();
                 })
             })
         });
-        it('will emit ready when listening on port', function (done) {
-            server = ro.server().listen(PORT);
-            server.on('ready', function () {
-                isPortTaken(PORT, function (err, isTaken) {
-                    assert.ok(!err);
-                    assert.ok(isTaken);
-                    done();
-                })
-            })
-        })
+//        it('will emit ready when listening on port', function (done) {
+//            server = ro.server().listen(PORT);
+//            server.on('ready', function () {
+//                isPortTaken(PORT, function (err, isTaken) {
+//                    t.ok(!err);
+//                    t.ok(isTaken);
+//                    done();
+//                })
+//            })
+//        });
     });
 
 
@@ -126,17 +107,17 @@ describe('server', function () {
         });
         it('should emit connect events', function (done) {
             server.once('connect', function (remote, connection) {
-                assert.ok(remote);
-                assert.ok(connection);
-//                assert.ok(connection.id);
+                t.ok(remote);
+                t.ok(connection);
+//                t.ok(connection.id);
                 done()
             });
-            var client = dnode.connect(PORT)
+            client = ro.client().connect(PORT)
         });
         it('should emit disconnect events', function (done) {
             server.once('connect', function (remote, connection) {
                 server.once('disconnect', function (disconnected) {
-                    assert.equal(connection, disconnected);
+                    t.equal(connection, disconnected);
                     done();
                 });
                 client.close();
@@ -145,32 +126,32 @@ describe('server', function () {
         });
         describe('server.connections', function () {
             it('should start with zero connections', function () {
-                assert.equal(server.connections.length, 0);
+                t.equal(server.connections.length, 0);
             });
             it('should hold connections', function (done) {
                 client = ro.client().connect(PORT, function (remote, conn) {
-                    assert.equal(server.connections.length, 1);
+                    t.equal(server.connections.length, 1);
                     done();
-                })
+                });
             });
             it('should remove connections', function (done) {
                 client = ro.client().connect(PORT, function (remote, conn) {
-                    assert.equal(server.connections.length, 1);
+                    t.equal(server.connections.length, 1);
                     client.close(function () {
-                        assert.equal(server.connections.length, 0);
+                        t.equal(server.connections.length, 0);
                         done();
                     });
                 })
             });
             it('should remove multiple connections', function (done) {
                 client = ro.client().connect(PORT, function (remote, conn) {
-                    assert.equal(server.connections.length, 1);
+                    t.equal(server.connections.length, 1);
                     var client2 = ro.client().connect(PORT, function (remote, conn) {
-                        assert.equal(server.connections.length, 2);
+                        t.equal(server.connections.length, 2);
                         client.close(function () {
-                            assert.equal(server.connections.length, 1);
+                            t.equal(server.connections.length, 1);
                             client2.close(function () {
-                                assert.equal(server.connections.length, 0);
+                                t.equal(server.connections.length, 0);
                                 done();
                             })
                         })
@@ -179,9 +160,9 @@ describe('server', function () {
             });
             it('should hold multiple connections', function(done) {
                 client = ro.client().connect(PORT, function(remote1, conn1) {
-                    assert.equal(server.connections.length, 1);
+                    t.equal(server.connections.length, 1);
                     var client2 = ro.client().connect(PORT, function(remote2, conn2) {
-                        assert.equal(server.connections.length, 2);
+                        t.equal(server.connections.length, 2);
                         client2.close(function() {
                             done();
                         })

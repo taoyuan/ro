@@ -1,8 +1,6 @@
 'use strict';
 
-var assert = require('assert');
-var async = require('async');
-
+var t = require('./init').t;
 var ro = require('../');
 
 var PORT = Math.floor(Math.random() * 5e4 + 1e4);
@@ -10,26 +8,10 @@ var PORT = Math.floor(Math.random() * 5e4 + 1e4);
 describe('client', function() {
     var server, client;
     function close(done) {
-        async.parallel([
-            function(next) {
-                if (server) {
-                    server.close(next)
-                } else {
-                    next()
-                }
-            },
-            function(next) {
-                if (client) {
-                    client.close(next)
-                } else {
-                    next()
-                }
-            }
-        ], function(err) {
-            done(err)
-        });
+        client && client.close();
+        server && server.close();
+        done();
     }
-    beforeEach(close);
     afterEach(close);
     beforeEach(function(done) {
         server = ro.server();
@@ -55,7 +37,7 @@ describe('client', function() {
             client = ro.client().connect(PORT);
             client.on('up', function(remote, connection) {
                 client.close(function() {
-                    assert.ok(client.closed);
+                    t.ok(client.closed);
                     done();
                 });
             });
@@ -93,14 +75,14 @@ describe('client', function() {
             client = ro.client().connect(PORT);
             client.on('up', function() {
                 client.close(function(err) {
-                    assert.ok(!err);
+                    t.ok(!err);
                     client.close(function(err) {
-                        assert.ok(!err);
+                        t.ok(!err);
                         client.close(function(err) {
-                            assert.ok(!err);
+                            t.ok(!err);
                             client.close(function(err) {
-                                assert.ok(!err);
-                                assert.ok(client.closed);
+                                t.ok(!err);
+                                t.ok(client.closed);
                                 done();
                             });
                         });
@@ -113,11 +95,11 @@ describe('client', function() {
             client = ro.client().connect(PORT);
             client.on('up', function() {
                 client.close(function(err) {
-                    assert.ok(!err);
+                    t.ok(!err);
                     client.connect(PORT);
                     client.on('up', function() {
                         client.close(function(err) {
-                            assert.ok(!err);
+                            t.ok(!err);
                             done();
                         })
                     })
@@ -129,8 +111,8 @@ describe('client', function() {
     describe('connecting to a port', function() {
         it('will use callback when listening on port', function(done) {
             client = ro.client().connect(PORT, function(remote, connection) {
-                assert.ok(remote);
-                assert.ok(connection);
+                t.ok(remote);
+                t.ok(connection);
                 connection.emit('up', remote);
                 done();
             });
@@ -139,7 +121,7 @@ describe('client', function() {
         it('will emit up when connected, passing connection object', function(done) {
             client = ro.client().connect(PORT);
             client.on('up', function(remote) {
-                assert.ok(remote);
+                t.ok(remote);
                 done();
             });
         });
@@ -151,8 +133,7 @@ describe('client', function() {
                 throw new Error('Shouldn\'t be up.');
             });
             client.socket && client.socket.once('error', function(err) {
-                assert.equal(err.syscall, 'connect');
-                assert.equal(err.errno, 'EADDRNOTAVAIL');
+                t.ok(/getaddrinfo\ ENOTFOUND/.test(err.message));
                 client.close(done);
             });
         })

@@ -1,8 +1,8 @@
-var midst = require('midst'),
+var _ = require('lodash'),
+    midst = require('midst'),
     server = require('./lib/server'),
     client = require('./lib/client'),
-    connection = require('./lib/connection'),
-    utils = require('./lib/utils');
+    connection = require('./lib/connection');
 
 module.exports = exports = function create(cons) {
     var app = {},
@@ -15,7 +15,7 @@ module.exports = exports = function create(cons) {
         var c = client(cons, m);
         return c.connect.apply(c, arguments);
     };
-    utils.merge(app, m);
+    _.extend(app, m);
     return app;
 };
 

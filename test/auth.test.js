@@ -1,5 +1,5 @@
 var ro = require('../'),
-    assert = require('assert');
+    t = require('./init').t;
 
 describe('auth', function() {
     it('authenticate state', function (done) {
@@ -7,9 +7,9 @@ describe('auth', function() {
 
         var client = ro.connect(port, function (remote, conn) {
             remote.auth('moo', 'hax', function (err, res) {
-                assert.ok(res);
+                t.ok(res);
 
-                if (err) assert.fail(err);
+                if (err) t.fail(err);
                 else conn.emit('up', res)
             });
         });

@@ -1,5 +1,5 @@
 var ro = require('../'),
-    assert = require('assert');
+    t = require('./init').t;
 
 describe('immediate', function() {
     it('immediate connection', function (done) {
@@ -12,7 +12,7 @@ describe('immediate', function() {
             var client = ro.connect(port);
             client.up(function (remote, connection) {
                 remote.beep(function (s) {
-                    assert.equal(s, 'boop');
+                    t.equal(s, 'boop');
                     client.close();
                     server.close();
                     done();

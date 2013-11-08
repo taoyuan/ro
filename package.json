@@ -1,25 +1,25 @@
 {
   "name": "ro",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "remoting framework for building distributed applications with node.js.",
   "main": "index.js",
   "scripts": {
-    "test": "node_modules/mocha/bin/mocha -t 10s -r test/init.js test/**/*.test.js"
+    "test": "node_modules/mocha/bin/mocha -t 10s test/**/*.test.js"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/torworx/ro.git"
   },
   "dependencies": {
-    "debug": "~0.7.2",
-    "midst": "~0.1.2",
-    "eventemitter2": "~0.4.11",
-    "dnode": "~1.0.5"
+    "debug2": "latest",
+    "midst": "latest",
+    "eventemitter2": "latest",
+    "dnode": "latest",
+    "lodash": "~2.2.1"
   },
   "devDependencies": {
     "mocha": "~1.10.0",
-    "async": "~0.2.9",
-    "tape": "~1.0.2"
+    "chai": "~1.8.1"
   },
   "keywords": [
     "remoting",
@@ -31,7 +31,6 @@
   "author": "Tao Yuan",
   "license": "BSD",
   "readmeFilename": "README.md",
-  "gitHead": "2c1fcb5759d8d17b7475a6a7b11453a03d970d44",
   "bugs": {
     "url": "https://github.com/torworx/ro/issues"
   }

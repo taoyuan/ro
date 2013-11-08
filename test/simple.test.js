@@ -1,5 +1,5 @@
 var ro = require('../'),
-    assert = require('assert');
+    t = require('./init').t;
 
 describe('simple', function () {
     it('simple integration should work', function (done) {
@@ -43,16 +43,16 @@ describe('simple', function () {
                 if (x < acc.min) acc.min = x;
                 return acc;
             }, { min: Infinity, max: -Infinity });
-            assert.ok(r0.max < Date.now());
-            assert.ok(r0.max > Date.now() - 5000);
-            assert.ok(r0.max - r0.min < 10);
+            t.ok(r0.max < Date.now());
+            t.ok(r0.max > Date.now() - 5000);
+            t.ok(r0.max - r0.min < 10);
 
-            assert.ok(messages[0] < messages[messages.length - 1]);
-            assert.ok(messages.length > 5);
+            t.ok(messages[0] < messages[messages.length - 1]);
+            t.ok(messages.length > 5);
 
-            assert.equal(counts.up, 2);
-            assert.equal(counts.down, 1);
-            assert.ok(counts.reconnect >= 2);
+            t.equal(counts.up, 2);
+            t.equal(counts.down, 1);
+            t.ok(counts.reconnect >= 2);
 
             off();
             client.close();
@@ -79,15 +79,15 @@ describe('simple', function () {
         }
     });
 
-    it('does not leak on.close listeners', function (_done) {
+    it('does not leak on.close listeners', function (done) {
         var port = Math.floor(Math.random() * 5e4 + 1e4);
         var client = ro.connect(port);
         var iterations = 3;
         on();
 
         client.once('close', function () {
-            assert.equal(client.listeners('close').length, 0);
-            _done();
+            t.equal(client.listeners('close').length, 0);
+            done();
         });
         client.on('up', function () {
             iterations--;
@@ -95,13 +95,13 @@ describe('simple', function () {
         });
 
         client.on('down', function () {
-            if (iterations === 0) return done();
+            if (iterations === 0) return _done();
             return on();
         });
 
-        function done() {
-            client.close();
-            server.close();
+        function _done() {
+            client && client.close();
+            server && server.close();
         }
 
         var server;
@@ -128,11 +128,11 @@ describe('simple', function () {
 
         client.on('remote', function (remote, connection) {
             client.up(function (remote_, conn_) {
-                assert.equal(remote, remote_);
-                assert.equal(connection, conn_);
+                t.equal(remote, remote_);
+                t.equal(connection, conn_);
 
-                client.close();
-                server.close();
+                client && client.close();
+                server && server.close();
                 done();
             });
             connection.emit('up', remote);

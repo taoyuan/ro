@@ -1,36 +1,18 @@
-var assert = require('assert');
-var async = require('async');
-
+var t = require('./init').t;
 var ro = require('../');
 
 var PORT = Math.floor(Math.random() * 5e4 + 1e4);
 
-describe('handing an API', function () {
+describe('integration/handing an API', function () {
 
     var client, server;
 
     function close(done) {
-        async.parallel([
-            function (next) {
-                if (server) {
-                    server.close(next);
-                } else {
-                    next();
-                }
-            },
-            function (next) {
-                if (client) {
-                    client.close(next);
-                } else {
-                    next();
-                }
-            }
-        ], function (err) {
-            done(err);
-        })
+        client && client.close();
+        server && server.close();
+        done();
     }
 
-    beforeEach(close);
     afterEach(close);
 
     // CLIENT TEST
@@ -47,10 +29,10 @@ describe('handing an API', function () {
             server = ro.server(service).listen(PORT);
             client = ro.client().connect(PORT);
             client.once('up', function (remote) {
-                assert.equal(remote.status, "working");
+                t.equal(remote.status, "working");
                 remote.whoami(function (err, val) {
-                    assert.equal(val, "server");
-                    assert.ok(!err);
+                    t.equal(val, "server");
+                    t.ok(!err);
                     done();
                 })
             });
@@ -62,9 +44,9 @@ describe('handing an API', function () {
                 return {
                     status: "working",
                     whoami: function (callback) {
-                        assert.ok(remote);
-                        assert.ok(connection);
-                        assert.equal(connection, _channel);
+                        t.ok(remote);
+                        t.ok(connection);
+                        t.equal(connection, _channel);
                         callback(null);
                     }
                 }
@@ -95,7 +77,7 @@ describe('handing an API', function () {
             client = ro.client().connect(PORT);
             client.once('up', function (remote) {
                 remote.say('cows.', function (err, value) {
-                    assert.equal(value, 'I said cows.');
+                    t.equal(value, 'I said cows.');
                     done()
                 })
             })
@@ -115,7 +97,7 @@ describe('handing an API', function () {
             client = ro.client().connect(PORT);
             client.once('up', function(remote) {
                 remote.say(function(err, value) {
-                    assert.equal(err.message, 'success');
+                    t.equal(err.message, 'success');
                     done()
                 })
             })
@@ -135,10 +117,10 @@ describe('handing an API', function () {
             };
             server = ro.server().listen(PORT);
             server.once('connect', function (remote) {
-                assert.equal(remote.status, "working");
+                t.equal(remote.status, "working");
                 remote.whoami(function (err, val) {
-                    assert.equal(val, "client");
-                    assert.ok(!err);
+                    t.equal(val, "client");
+                    t.ok(!err);
                     done()
                 })
             });
@@ -151,9 +133,9 @@ describe('handing an API', function () {
                 return {
                     status: "working",
                     whoami: function (callback) {
-                        assert.ok(remote);
-                        assert.ok(connection);
-                        assert.equal(connection, _channel);
+                        t.ok(remote);
+                        t.ok(connection);
+                        t.equal(connection, _channel);
                         callback(null)
                     }
                 }
@@ -179,7 +161,7 @@ describe('handing an API', function () {
             server = ro.server().listen(PORT);
             server.once('connect', function (remote, connection) {
                 remote.say('cows.', function (err, value) {
-                    assert.equal(value, 'I said cows.');
+                    t.equal(value, 'I said cows.');
                     server.close(done)
                 })
             });
@@ -198,7 +180,7 @@ describe('handing an API', function () {
             server = ro.server().listen(PORT);
             server.once('connect', function (remote, connection) {
                 remote.say('cows.', function (err, value) {
-                    assert.equal(err.message, 'success');
+                    t.equal(err.message, 'success');
                     server.close(done)
                 })
             });

@@ -1,9 +1,13 @@
-var ro = require('../');
+var ro = require('../'),
+    t = require('./init').t;
 
 describe('cons', function() {
     it('constructor', function (done) {
-        var t = test();
-        t.plan(2);
+        var plan = t.plan(2, function () {
+            client && client.close();
+            server && server.close();
+            done();
+        });
         var port = Math.floor(Math.random() * 5e4 + 1e4);
 
         var client = ro.client(function () {
@@ -15,17 +19,14 @@ describe('cons', function() {
         });
         server.on('connect', function (remote) {
             t.equal(remote.beep, 5);
+            plan.done();
         });
         server.listen(port);
 
         client.up(function (remote) {
             t.equal(remote.boop, 6);
+            plan.done();
         });
 
-        t.on('end', function() {
-            client.close();
-            server.close();
-            done();
-        });
     });
 });

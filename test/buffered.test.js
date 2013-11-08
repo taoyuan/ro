@@ -1,11 +1,15 @@
 var ro = require('../'),
+    t = require('./init').t,
     net = require('net');
 
 
 describe('buffered', function () {
     it('buffered connections', function (done) {
-        var t = test();
-        t.plan(5);
+        var plan = t.plan(5, function () {
+            client && client.close();
+            server && server.close();
+            done();
+        });
         var port = Math.floor(Math.random() * 5e4 + 1e4);
         var client = ro.connect(port);
 
@@ -14,6 +18,7 @@ describe('buffered', function () {
                 client.up(function (remote) {
                     remote.time(function (time) {
                         t.ok(time);
+                        plan.done();
                     });
                 });
             }, 2000);
@@ -33,11 +38,5 @@ describe('buffered', function () {
         ));
 
         server.listen(port);
-
-        t.on('end', function () {
-            server.close();
-            client.close();
-            done();
-        });
     });
 });
