@@ -1,7 +1,7 @@
 var ro = require('../'),
     t = require('./init').t;
 
-describe('auth', function() {
+describe('auth', function () {
     it('authenticate state', function (done) {
         var port = Math.floor(Math.random() * 5e4 + 1e4);
 
@@ -18,7 +18,7 @@ describe('auth', function() {
         var iv = setInterval(function () {
             client.up(function (remote) {
                 remote.beep(function (s) {
-                    times --;
+                    times--;
                     if (times === 5) {
                         server.close();
                         connect();
@@ -33,28 +33,28 @@ describe('auth', function() {
             });
         }, 200);
 
-        function auth_middleware(c, next) {
-            c.local.auth = function (user, pass, cb) {
-                if (user === 'moo' && pass === 'hax') {
-                    c.local = {};
-                    next();
-                    cb(null, c.local);
+        function service() {
+            return  {
+                beep: function (fn) {
+                    fn(new Date().toString());
                 }
-                else cb('ACCESS DENIED')
-            };
-        }
-
-        function service_middleware(c) {
-            c.local.beep = function (fn) { fn(new Date().toString()) };
+            }
         }
 
         var server = null;
-        function connect () {
-            server = ro.server();
-            server.use(auth_middleware);
-            server.use(service_middleware);
+
+        function connect() {
+            server = ro.server(function (client, conn) {
+                this.auth = function (user, pass, cb) {
+                    if (user === 'moo' && pass === 'hax') {
+                        cb(null, service());
+                    }
+                    else cb('ACCESS DENIED')
+                };
+            });
             server.listen(port);
         }
+
         connect();
     });
 });
