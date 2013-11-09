@@ -1,7 +1,7 @@
 var ro = require('../../');
 var tls = require('tls');
 var client = ro.client().connect({
-    createStream : tls.connect.bind(null, 7000, {rejectUnauthorized: true})
+    createStream : tls.connect.bind(null, 7000, {rejectUnauthorized: false})
 });
 
 setInterval(function () {
