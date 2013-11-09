@@ -1,5 +1,6 @@
 var ro = require('../'),
-    t = require('./init').t;
+    s = require('./support'),
+    t = s.t;
 
 describe('auth', function () {
     it('authenticate state', function (done) {

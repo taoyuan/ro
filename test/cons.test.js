@@ -1,12 +1,11 @@
 var ro = require('../'),
-    t = require('./init').t;
+    s = require('./support'),
+    t = s.t;
 
 describe('cons', function() {
     it('constructor', function (done) {
         var plan = t.plan(2, function () {
-            client && client.close();
-            server && server.close();
-            done();
+            s.close([client, server], done);
         });
         var port = Math.floor(Math.random() * 5e4 + 1e4);
 

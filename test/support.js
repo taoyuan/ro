@@ -1,5 +1,7 @@
 var chai = require('chai');
 var t = chai.assert;
+var _ = require('lodash');
+var async = require('async');
 
 exports.t = t;
 
@@ -9,6 +11,16 @@ t.plan = function (count, done) {
             if (--count === 0) done();
         }
     }
+};
+
+exports.close = function (objects, done) {
+    if (!_.isArray(objects)) {
+        objects = [objects];
+    }
+    var fns = _.map(objects, function (object) {
+        return object.close ? object.close.bind(object) : object;
+    });
+    return async.series(fns, done);
 };
 
 //takeOverConsole('warn');

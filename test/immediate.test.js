@@ -1,5 +1,6 @@
 var ro = require('../'),
-    t = require('./init').t;
+    s = require('./support'),
+    t = s.t;
 
 describe('immediate', function() {
     it('immediate connection', function (done) {
@@ -11,11 +12,9 @@ describe('immediate', function() {
         server.listen(port, function () {
             var client = ro.connect(port);
             client.up(function (remote, connection) {
-                remote.beep(function (s) {
-                    t.equal(s, 'boop');
-                    client.close();
-                    server.close();
-                    done();
+                remote.beep(function (v) {
+                    t.equal(v, 'boop');
+                    s.close([client, server], done);
                 });
             });
         });

@@ -1,21 +1,18 @@
 var _ = require('lodash'),
-    midst = require('midst'),
     Server = require('./lib/server'),
     Client = require('./lib/client'),
     connection = require('./lib/connection');
 
 module.exports = exports = function create(cons) {
-    var app = {},
-        m = midst();
+    var app = {};
     app.listen = function () {
-        var s = new Server(cons, m);
+        var s = new Server(cons);
         return s.listen.apply(s, arguments);
     };
     app.connect = function () {
-        var c = new Client(cons, m);
+        var c = new Client(cons);
         return c.connect.apply(c, arguments);
     };
-    _.extend(app, m);
     return app;
 };
 

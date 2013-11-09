@@ -1,4 +1,5 @@
-var t = require('./init').t;
+var s = require('./support'),
+    t = s.t;
 var ro = require('../');
 
 var PORT = Math.floor(Math.random() * 5e4 + 1e4);
@@ -8,9 +9,7 @@ describe('integration/handing an API', function () {
     var client, server;
 
     function close(done) {
-        client && client.close();
-        server && server.close();
-        done();
+        s.close([client, server], done);
     }
 
     afterEach(close);

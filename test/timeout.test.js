@@ -1,5 +1,6 @@
 var ro = require('../'),
-    t = require('./init').t;
+    s = require('./support'),
+    t = s.t;
 
 it('timeout', function (done) {
     var port = Math.floor(Math.random() * 5e4 + 1e4);

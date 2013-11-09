@@ -1,5 +1,6 @@
 var ro = require('../'),
-    t = require('./init').t;
+    s = require('./support'),
+    t = s.t;
 
 describe('simple', function () {
     it('simple integration should work', function (done) {

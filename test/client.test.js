@@ -1,16 +1,15 @@
 'use strict';
 
-var t = require('./init').t;
-var ro = require('../');
+var s = require('./support'),
+    t = s.t,
+    ro = require('../');
 
 var PORT = Math.floor(Math.random() * 5e4 + 1e4);
 
 describe('client', function() {
     var server, client;
     function close(done) {
-        client && client.close();
-        server && server.close();
-        done();
+        s.close([client, server], done)
     }
     afterEach(close);
     beforeEach(function(done) {
@@ -92,15 +91,19 @@ describe('client', function() {
         });
 
         it('won\'t error if close and connect multiple times', function(done) {
-            client = ro.client().connect(PORT);
-            client.on('up', function() {
+            var hDone;
+            client = ro.connect(PORT);
+            client.once('up', function() {
                 client.close(function(err) {
                     t.ok(!err);
                     client.connect(PORT);
-                    client.on('up', function() {
+                    client.once('up', function() {
                         client.close(function(err) {
                             t.ok(!err);
-                            done();
+                            if (hDone) t.fail();
+                            hDone = setTimeout(function () {
+                                done();
+                            }, 500);
                         })
                     })
                 })

@@ -1,14 +1,13 @@
 var ro = require('../'),
-    t = require('./init').t,
+    s = require('./support'),
+    t = s.t,
     net = require('net');
 
 
 describe('buffered', function () {
     it('buffered connections', function (done) {
         var plan = t.plan(5, function () {
-            client && client.close();
-            server && server.close();
-            done();
+            s.close([client, server], done);
         });
         var port = Math.floor(Math.random() * 5e4 + 1e4);
         var client = ro.connect(port);
