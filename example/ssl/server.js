@@ -2,8 +2,8 @@ var ro = require('../../'),
     fs = require('fs');
 
 var opts = {
-    key: fs.readFileSync(__dirname + '/keys/key.pem'),
-    cert: fs.readFileSync(__dirname + '/keys/cert.pem')
+    keyFile: 'keys/key.pem',
+    certFile: 'keys/cert.pem'
 };
 
 
