@@ -4,7 +4,7 @@ const _ = require('lodash');
 // start mosca server for test
 // new require('mosca').Server({port: 9999});
 
-const server = ro.server({
+const server = ro.server.create({
 	add: async function (args) {
 		return _.reduce(args, function (sum, value) {
 			return sum + value;
@@ -12,7 +12,7 @@ const server = ro.server({
 	},
 
 	// example on how to reject
-	rejection: async function () {
+	rejection: async function () {7`123o890-p`
 		throw server.error(501, 'not implemented');
 	}
 });

@@ -33,7 +33,7 @@ describe('RemJson.MQTT', function () {
 		it('should support mqtt client and not owned the client', function (done) {
 			const mqttclient = mqttr.connect(mqttserver.url);
 			mqttclient.ready(function () {
-				const server = ro.server(support.server.methods, support.server.options).mqtt(mqttclient, '$foo');
+				const server = ro.server.create(support.server.methods, support.server.options).mqtt(mqttclient, '$foo');
 				server.client.should.equal(mqttclient);
 				server.topic.should.equal('$foo');
 				server.ready(function () {
@@ -46,7 +46,7 @@ describe('RemJson.MQTT', function () {
 		});
 
 		it('should support mqtt url and owned the mqtt client', function (done) {
-			const server = ro.server(support.server.methods, support.server.options).mqtt(mqttserver.url, '$foo');
+			const server = ro.server.create(support.server.methods, support.server.options).mqtt(mqttserver.url, '$foo');
 			server.topic.should.equal('$foo');
 			server.ready(function () {
 				server.close(function () {
@@ -145,7 +145,7 @@ describe('RemJson.MQTT', function () {
 			},
 		};
 
-		const server = ro.server(support.server.methods, support.server.options).mqtt(mqttserver.url, options);
+		const server = ro.server.create(support.server.methods, support.server.options).mqtt(mqttserver.url, options);
 		const client = ro.client.mqtt(mqttserver.url, options);
 
 		before(function (done) {

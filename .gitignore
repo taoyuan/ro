@@ -1,3 +1,4 @@
 jasmine*.js
 node_modules
 .idea
+lib

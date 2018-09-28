@@ -1,7 +1,7 @@
 ro
 ==
 
-A nodejs remoting framework for building distributed applications based on []jayson](https://github.com/tedeh/jayson)
+A nodejs remoting framework for building distributed applications based on [jayson](https://github.com/tedeh/jayson)
 
 ## Features
 
