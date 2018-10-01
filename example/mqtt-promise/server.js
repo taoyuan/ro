@@ -12,7 +12,7 @@ const server = ro.server.create({
 	},
 
 	// example on how to reject
-	rejection: async function () {7`123o890-p`
+	rejection: async function () {
 		throw server.error(501, 'not implemented');
 	}
 });
