@@ -1,3 +1,5 @@
+/// <reference path="../typings/jayson/index.d.ts" />
+
 import jayson = require('jayson');
 import {MethodLike} from "jayson";
 import * as mqttr from 'mqttr';
@@ -8,8 +10,6 @@ export interface ROServer {
 	mqtt: (client: string | mqttr.Client, options?, logger?) => MQTTServer;
 }
 
-// @ts-ignore
-// mqtt function is attached in creation of jayson.Server
 export class Server extends jayson.Server implements ROServer {
 
 	constructor(methods?: { [methodName: string]: MethodLike }, options?: { [name: string]: any }) {
@@ -20,6 +20,11 @@ export class Server extends jayson.Server implements ROServer {
 
 	static create(methods?: { [methodName: string]: MethodLike }, options?: { [name: string]: any }) {
 		return new Server(methods, options);
+	}
+
+	// this will be override by the creation of jayson.Server
+	mqtt(client: string | mqttr.Client, options?, logger?) {
+		return MQTTServer.create(this, client, options, logger);
 	}
 
 }
