@@ -65,6 +65,7 @@ export = class MQTTClient extends Client {
 		}
 
 		opts = Object.assign({
+			qos: 1,
 			logger: {
 				level: 'warn',
 				prettyPrint: {
@@ -124,14 +125,14 @@ export = class MQTTClient extends Client {
 					this.subscriptions[replyTopic] = client.subscribe(replyTopic, (topic, payload) => {
 						// handle response
 						this._handleResponse(topic, payload);
-					});
+					},{qos: options.qos});
 				}
 			}
 
 			this.logger.debug("< Outgoing to %s : %j", topic, request);
 
 			// publish request
-			client.publish(topic, request, () => {
+			client.publish(topic, request, {qos: options.qos},() => {
 				if (timeout && ids.length) {
 					const timer: NodeJS.Timer = timers.setTimeout(() => {
 

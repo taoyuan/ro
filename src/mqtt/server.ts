@@ -21,6 +21,7 @@ export = class MQTTServer extends EventEmitter {
 			options = {topic: options};
 		}
 		options = Object.assign({
+			qos: 1,
 			logger: {
 				level: 'warn',
 				prettyPrint: {
@@ -56,7 +57,7 @@ export = class MQTTServer extends EventEmitter {
 					this.client.publish(replyTopic, response);
 				}
 			});
-		});
+		}, {qos: options.qos});
 	}
 
 	ready(cb) {
