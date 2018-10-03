@@ -60,7 +60,7 @@ export = class MQTTClient extends Client {
 		assert(opts.topic, '"opts.topic" is required');
 
 		// set default timeout
-		if (typeof opts.timeout === 'undefined') {
+		if (opts.timeout == null) {
 			opts.timeout = 100;
 		}
 

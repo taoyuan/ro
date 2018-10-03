@@ -175,7 +175,7 @@ describe('RemJson.MQTT', function () {
 
 			it('should callback with timeout error when request is timeout', function (done) {
 				const a = 11, b = 12;
-				client.request('add', [a, b], {timeout: 1}, function (err, error, result) {
+				client.request('add_slow', [a, b, true], {timeout: 1}, function (err, error, result) {
 					should.exist(err);
 					err.name.should.equal('TimeoutError');
 					should.not.exist(error);

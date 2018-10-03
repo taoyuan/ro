@@ -10,10 +10,6 @@ export = class MQTTServer extends EventEmitter {
 	subscription: mqttr.Subscription;
 	protected _owns: boolean;
 
-	static create(server: any, client: string | mqttr.Client, options?, logger?) {
-		return new MQTTServer(server, client, options, logger);
-	}
-
 	constructor(server: any, client: string | mqttr.Client, options?, logger?) {
 		super();
 
@@ -42,11 +38,13 @@ export = class MQTTServer extends EventEmitter {
 		this.logger = logger = logger || require('pino')(options.logger);
 		this.topic = options.topic;
 
-		const that = this;
 		this.subscription = this.client.subscribe(options.topic, (topic: string, payload: any): void => {
 			server.call(payload, (error, success) => {
 				const response = error || success;
-				if (!that.client.connected || !response) return;
+				if (!this.client.connected || this.client.disconnecting || !response) {
+					logger.debug('The client is disconnected or disconnecting. Ignore response!');
+					return;
+				}
 
 				const shouldReply = Array.isArray(response) ? response.find(item => !!item.id) : response.id;
 
@@ -54,10 +52,14 @@ export = class MQTTServer extends EventEmitter {
 					const replyTopic = topic + "/reply";
 					logger.debug('< Outgoing to ("%s": %j)', replyTopic, response);
 					// @ts-ignore
-					this.client.publish(replyTopic, response);
+					this.client.publish(replyTopic, response, {qos: options.qos});
 				}
 			});
 		}, {qos: options.qos});
+	}
+
+	static create(server: any, client: string | mqttr.Client, options?, logger?) {
+		return new MQTTServer(server, client, options, logger);
 	}
 
 	ready(cb) {
