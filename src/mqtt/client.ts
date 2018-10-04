@@ -8,7 +8,7 @@ import mqttr = require('mqttr');
 import {Client} from '../client';
 import {Subscription} from "mqttr/lib";
 import {TimeoutError} from "../errors";
-import {createPromiseCallback} from "../utils";
+import {createPromiseCallback, NotifyCallback, PromiseCallback} from "../utils";
 
 interface MQTTClientOptions {
 	[name: string]: any;
@@ -197,12 +197,11 @@ export = class MQTTClient extends Client {
 		return pending;
 	};
 
-	ready(cb) {
+	ready(cb: NotifyCallback) {
 		return PromiseA.fromCallback(cb => this.client.ready(cb)).asCallback(cb);
 	};
 
-
-	close(cb) {
+	close(cb?: NotifyCallback) {
 		cb = cb || createPromiseCallback();
 		if (this._owns) {
 			this.logger.debug('close mqtt connection');
@@ -211,6 +210,7 @@ export = class MQTTClient extends Client {
 			cb();
 		}
 
+		// @ts-ignore
 		return cb.promise;
 	};
 }
