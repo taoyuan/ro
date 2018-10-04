@@ -7,8 +7,7 @@ import {
 	JSONRPCResultLike, JSONRPCErrorLike,
 } from "jayson";
 
-import {createPromiseCallback} from "./utils";
-import MQTTClient = require('./mqtt/client');
+import {createPromiseCallback, NotifyCallback} from "./utils";
 
 const {utils} = require('jayson');
 
@@ -120,7 +119,17 @@ export class Client extends JaysonClient {
 		return callback.promise;
 	}
 
-	static mqtt(client: any, options?, logger?): MQTTClient {
-		return MQTTClient.create(client, options, logger);
+	ready(cb: NotifyCallback) {
+		throw new Error('Unimplemented');
+	}
+
+	close(): Promise<any>;
+	close(cb: NotifyCallback): undefined;
+	close(cb?: NotifyCallback): Promise<any> | undefined {
+		throw new Error('Unimplemented');
+	}
+
+	static mqtt(client: any, options?, logger?): Client {
+		return require('./mqtt/client').create(client, options, logger);
 	}
 }
