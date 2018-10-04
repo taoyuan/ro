@@ -8,6 +8,8 @@ import {
 } from "jayson";
 
 import {createPromiseCallback} from "./utils";
+import MQTTClient = require('./mqtt/client');
+
 const {utils} = require('jayson');
 
 export interface RequestOptions {
@@ -118,7 +120,7 @@ export class Client extends JaysonClient {
 		return callback.promise;
 	}
 
-	static mqtt(client: any, options?, logger?) {
-		return require('./mqtt/client').create(client, options, logger);
+	static mqtt(client: any, options?, logger?): MQTTClient {
+		return MQTTClient.create(client, options, logger);
 	}
 }

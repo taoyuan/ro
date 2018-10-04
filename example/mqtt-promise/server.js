@@ -2,7 +2,7 @@ const ro = require('../..');
 const _ = require('lodash');
 
 // start mosca server for test
-// new require('mosca').Server({port: 9999});
+new require('mosca').Server({port: 9999});
 
 const server = ro.server.create({
 	add: async function (args) {
