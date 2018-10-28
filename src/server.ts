@@ -5,7 +5,7 @@ import {Method} from './method';
 import MQTTServer = require('./mqtt/server');
 
 export interface ROServer {
-	mqtt: (client: string | mqttr.Client, options?, logger?) => MQTTServer;
+	mqtt(client: string | mqttr.Client, options?, logger?): any;
 }
 
 export class Server extends jayson.Server implements ROServer {
@@ -21,7 +21,7 @@ export class Server extends jayson.Server implements ROServer {
 	}
 
 	// this will be override by the creation of jayson.Server
-	mqtt(client: string | mqttr.Client, options?, logger?) {
+	mqtt(client: string | mqttr.Client, options?, logger?): any {
 		return MQTTServer.create(this, client, options, logger);
 	}
 
