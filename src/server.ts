@@ -1,5 +1,3 @@
-/// <reference path="../typings/jayson/index.d.ts" />
-
 import jayson = require('jayson');
 import {MethodLike} from "jayson";
 import * as mqttr from 'mqttr';

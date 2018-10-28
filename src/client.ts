@@ -31,17 +31,12 @@ export class Client extends JaysonClient {
 		super(server, options);
 	}
 
-	// @ts-ignore
-	request(method: string, params: RequestParamsLike, id?: string, options?: RequestOptions, callback?: JSONRPCCallbackType): Promise<JSONRPCResponse> | undefined;
-	// @ts-ignore
-	request(method: string, params: RequestParamsLike, id?: string, callback?: JSONRPCCallbackType): Promise<JSONRPCResponse> | undefined;
-	// @ts-ignore
-	request(method: string, params: RequestParamsLike, options?: RequestOptions, callback?: JSONRPCCallbackType): Promise<JSONRPCResponse> | undefined;
-	// @ts-ignore
-	request(method: string, params: RequestParamsLike, callback?: JSONRPCCallbackType): Promise<JSONRPCResponse> | undefined;
+	remcall(method: string, params: RequestParamsLike, id?: string, options?: RequestOptions, callback?: JSONRPCCallbackType): Promise<JSONRPCResponse> | undefined;
+	remcall(method: string, params: RequestParamsLike, id?: string, callback?: JSONRPCCallbackType): Promise<JSONRPCResponse> | undefined;
+	remcall(method: string, params: RequestParamsLike, options?: RequestOptions, callback?: JSONRPCCallbackType): Promise<JSONRPCResponse> | undefined;
+	remcall(method: string, params: RequestParamsLike, callback?: JSONRPCCallbackType): Promise<JSONRPCResponse> | undefined;
 
-	// @ts-ignore
-	request(method, params, id?, options?, callback?) {
+	remcall(method, params, id?, options?, callback?) {
 		let request = null;
 
 		// is this a batch request?

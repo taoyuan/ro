@@ -18,7 +18,7 @@ exports.testCommonForClient = function(client) {
 
 		it('should be able to request a success-method on the server', function(done) {
 			const a = 11, b = 12;
-			client.request('add', [a, b], function(err, error, result) {
+			client.remcall('add', [a, b], function(err, error, result) {
 				if(err || error) return done(err || error);
 				should.exist(result);
 				result.should.equal(a + b);
@@ -27,7 +27,7 @@ exports.testCommonForClient = function(client) {
 		});
 
 		it('should be able to request an error-method on the server', function(done) {
-			client.request('error', [], function(err, error, result) {
+			client.remcall('error', [], function(err, error, result) {
 				if(err) return done(err);
 				should.not.exist(result);
 				should.exist(error);
@@ -40,7 +40,7 @@ exports.testCommonForClient = function(client) {
 		it('should support reviving and replacing', function(done) {
 			const a = 2, b = 1;
 			const instance = new Counter(a);
-			client.request('incrementCounterBy', [instance, b], function(err, error, result) {
+			client.remcall('incrementCounterBy', [instance, b], function(err, error, result) {
 				should.not.exist(err);
 				should.not.exist(error);
 				should.exist(result);
@@ -51,7 +51,7 @@ exports.testCommonForClient = function(client) {
 		});
 
 		it('should be able to handle a notification', function(done) {
-			client.request('add', [3, 4], null, function(err) {
+			client.remcall('add', [3, 4], null, function(err) {
 				if(err) return done(err);
 				arguments.length.should.equal(0);
 				done();
@@ -60,10 +60,10 @@ exports.testCommonForClient = function(client) {
 
 		it('should be able to handle a batch request', function(done) {
 			const batch = [
-				client.request('add', [4, 9], undefined, false),
-				client.request('add', [10, 22], undefined, false)
+				client.remcall('add', [4, 9], undefined, false),
+				client.remcall('add', [10, 22], undefined, false)
 			];
-			client.request(batch, function(err, responses) {
+			client.remcall(batch, function(err, responses) {
 				should.not.exist(err);
 				should.exist(responses);
 				responses.should.be.instanceof(Array).and.have.length(2);

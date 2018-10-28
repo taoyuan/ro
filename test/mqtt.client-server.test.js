@@ -84,7 +84,7 @@ describe('RemJson.MQTT', function () {
 
 		it('should support timeout number in request options', function (done) {
 			const client = ro.client.mqtt(mqttserver.url, {topic: '$foo', timeout: 54321});
-			client.request('unknown', [], undefined, 1, function (err) {
+			client.remcall('unknown', [], undefined, 1, function (err) {
 				should.exist(err);
 				err.name.should.equal('TimeoutError');
 				err.timeout.should.equal(1);
@@ -120,7 +120,7 @@ describe('RemJson.MQTT', function () {
 
 			const client = ro.client.mqtt(mqttserver.url, '$foo');
 			// timeout 1s is enough to receive response
-			client.request('bar', [1], {timeout: 1000}, function (err, error, result) {
+			client.remcall('bar', [1], {timeout: 1000}, function (err, error, result) {
 				should.exist(err);
 				err.name.should.equal('TimeoutError');
 				err.timeout.should.equal(1000);
@@ -165,7 +165,7 @@ describe('RemJson.MQTT', function () {
 		describe('request', function () {
 			it('should return immediately with timeout is 0', function (done) {
 				const a = 11, b = 12;
-				client.request('add', [a, b], {timeout: 0}, function (err, error, result) {
+				client.remcall('add', [a, b], {timeout: 0}, function (err, error, result) {
 					should.not.exist(err);
 					should.not.exist(error);
 					should.not.exist(result);
@@ -175,7 +175,7 @@ describe('RemJson.MQTT', function () {
 
 			it('should callback with timeout error when request is timeout', function (done) {
 				const a = 11, b = 12;
-				client.request('add_slow', [a, b, true], {timeout: 1}, function (err, error, result) {
+				client.remcall('add_slow', [a, b, true], {timeout: 1}, function (err, error, result) {
 					should.exist(err);
 					err.name.should.equal('TimeoutError');
 					should.not.exist(error);

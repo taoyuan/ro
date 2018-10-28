@@ -1,7 +1,7 @@
 {
   "name": "ro",
   "version": "1.1.8",
-  "description": "remoting framework for building distributed applications with node.js.",
+  "description": "A remoting framework for building distributed applications with node.js.",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "files": [
