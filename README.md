@@ -5,6 +5,8 @@ A nodejs remoting framework for building distributed applications based on [jays
 
 ## Features
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/taoyuan/ro.svg)](https://greenkeeper.io/)
+
 * Promised and Callback api
 * MQTT server and client
 * All features from jayson
